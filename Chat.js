@@ -27,21 +27,16 @@ Elm.Chat.make = function (elm)
                   var Graphics = Graphics || {};
                   Graphics.Input = Elm.Graphics.Input.make(elm);
                   var JavaScript = Elm.JavaScript.make(elm);
-                  var JavaScript = JavaScript || {};
-                  JavaScript.Experimental = Elm.JavaScript.Experimental.make(elm);
                   var Http = Elm.Http.make(elm);
                   var Json = Elm.Json.make(elm);
-                  var dataChanges = Signal.constant(JavaScript.fromString("Loading..."));
-                  document.addEventListener("dataChanged_" + elm.id,
+                  var messageArrived = Signal.constant(JavaScript.fromString("Loading..."));
+                  document.addEventListener("messageArrived_" + elm.id,
                                             function (e)
                                             {
-                                              elm.notify(dataChanges.id,e.value);
+                                              elm.notify(messageArrived.id,e.value);
                                             });
                   var _op = {};
-                  var toRequestData = function (message)
-                                      {
-                                        return Json.toString(" ")(Json.fromJSObject(JavaScript.Experimental.fromRecord({_: {}, text: message})));
-                                      };
+                  var messageArrived = Signal.constant(JavaScript.fromString("Loading..."));
                   var firebaseRequest = F2(function (requestType,requestData)
                                            {
                                              return A4(Http.request,
@@ -63,7 +58,6 @@ Elm.Chat.make = function (elm)
                                                        _L.append("\"",_L.append(message,"\"")));
                                            }();
                                   };
-                  var dataChanges = Signal.constant(JavaScript.fromString("Loading..."));
                   var addNewMessage = F2(function (newMessage,messages)
                                          {
                                            return _L.append(messages,
@@ -72,7 +66,7 @@ Elm.Chat.make = function (elm)
                   var incomingMessages = A3(Signal.foldp,
                                             addNewMessage,
                                             _J.toList([]),
-                                            dataChanges);
+                                            messageArrived);
                   var incoming = A2(Util._op["~>"],
                                     incomingMessages,
                                     Graphics.Element.flow(Graphics.Element.down));
@@ -89,7 +83,7 @@ Elm.Chat.make = function (elm)
                   var main = A2(Util._op["<~~"],
                                 A2(Util._op["~~>"],incoming,Graphics.Element.above),
                                 outgoing);
-                  elm.Chat.values = {_op: _op, firebaseRequest: firebaseRequest, addNewMessage: addNewMessage, incomingMessages: incomingMessages, incoming: incoming, field: field, message: message, button: button, send: send, messageToSend: messageToSend, toRequestData: toRequestData, toRequest: toRequest, requests: requests, sendRequests: sendRequests, outgoing: outgoing, main: main};
+                  elm.Chat.values = {_op: _op, firebaseRequest: firebaseRequest, addNewMessage: addNewMessage, incomingMessages: incomingMessages, incoming: incoming, field: field, message: message, button: button, send: send, messageToSend: messageToSend, toRequest: toRequest, requests: requests, sendRequests: sendRequests, outgoing: outgoing, main: main};
                   return elm.Chat.values;
                 };Elm.Util = Elm.Util || {};
 Elm.Util.make = function (elm)
