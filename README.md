@@ -1,7 +1,5 @@
-elm-lib
-=======
-
 Elm Libraries and Examples
+=======
 
 To build an example, run:
 
