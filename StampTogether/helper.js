@@ -1,5 +1,10 @@
-var firebaseData = new Firebase('https://thsoft.firebaseio-demo.com/stamps');
-var elm = Elm.fullscreen(Elm.StampTogether.Main);
+var firebaseData = new Firebase('https://thsoft.firebaseio-demo.com/thisiselmstamps');
+var elm = Elm.fullscreen(Elm.StampTogether, {
+	stamped: {
+		x: 0,
+		y: 0
+	}
+});
 firebaseData.on('child_added', function(snapshot) {
-	elm.send('stamped', snapshot.val());
+	elm.ports.stamped.send(snapshot.val());
 });
