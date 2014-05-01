@@ -1,11 +1,9 @@
 module StampTogether where
 
 import Util (..)
-import Graphics.Input as Input
+import Http
 import JavaScript as JS
 import JavaScript.Experimental as JEXP
-import Http
-import Json
 import Mouse
 import Dict
 import Window
@@ -30,7 +28,16 @@ main = lift2 scene Window.dimensions stamps
 
 -- Outgoing
 
-firebaseRequest requestType requestData = Http.request requestType "https://thsoft.firebaseio-demo.com/thisiselmstamps.json" requestData []
+firebaseUrl = "https://thsoft.firebaseio-demo.com/thisiselmstamps"
+
+clock = foldp (+) 0 (fps 30)
+trigger = ((==) 0) <~ clock |> dropRepeats
+hack = sampleOn trigger (constant firebaseUrl)
+
+port url : Signal String
+port url = hack
+
+firebaseRequest requestType requestData = Http.request requestType (firebaseUrl ++ ".json") requestData []
 
 serialize r = r |> JEXP.fromRecord |> Json.fromJSObject |> Json.toJSString " " |> JS.toString
 
