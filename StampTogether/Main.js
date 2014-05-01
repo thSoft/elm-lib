@@ -9,7 +9,6 @@ Elm.StampTogether.make = function (_elm)
                                _U = _N.Utils.make(_elm),
                                _L = _N.List.make(_elm),
                                _E = _N.Error.make(_elm),
-                               _J = _N.JavaScript.make(_elm),
                                $moduleName = "StampTogether";
                            var Basics = Elm.Basics.make(_elm);
                            var Color = Elm.Color.make(_elm);
@@ -18,16 +17,13 @@ Elm.StampTogether.make = function (_elm)
                            Graphics.Collage = Elm.Graphics.Collage.make(_elm);
                            var Graphics = Graphics || {};
                            Graphics.Element = Elm.Graphics.Element.make(_elm);
-                           var Graphics = Graphics || {};
-                           Graphics.Input = Elm.Graphics.Input.make(_elm);
                            var Http = Elm.Http.make(_elm);
-                           var JavaScript = Elm.JavaScript.make(_elm);
-                           var JavaScript = JavaScript || {};
-                           JavaScript.Experimental = Elm.JavaScript.Experimental.make(_elm);
                            var Json = Elm.Json.make(_elm);
                            var List = Elm.List.make(_elm);
                            var Maybe = Elm.Maybe.make(_elm);
                            var Mouse = Elm.Mouse.make(_elm);
+                           var Native = Native || {};
+                           Native.Json = Elm.Native.Json.make(_elm);
                            var Native = Native || {};
                            Native.Ports = Elm.Native.Ports.make(_elm);
                            var Signal = Elm.Signal.make(_elm);
@@ -38,29 +34,59 @@ Elm.StampTogether.make = function (_elm)
                            var Window = Elm.Window.make(_elm);
                            var _op = {};
                            var clicks = Signal.sampleOn(Mouse.clicks)(Mouse.position);
-                           var serialize = function (r)
+                           var serialize = function (_v0)
                                            {
-                                             return JavaScript.toString(Json.toJSString(" ")(Json.fromJSObject(JavaScript.Experimental.fromRecord(r))));
+                                             return function ()
+                                                    {
+                                                      return Json.toString("")(Json.Object(A2(Dict.insert,
+                                                                                              "y",
+                                                                                              Json.Number(_v0.y))(A2(Dict.insert,
+                                                                                                                     "x",
+                                                                                                                     Json.Number(_v0.x))(Dict.empty))));
+                                                    }();
                                            };
-                           var toRequestData = function (_v0)
+                           var toRequestData = function (_v2)
                                                {
                                                  return function ()
                                                         {
-                                                          switch (_v0.ctor)
+                                                          switch (_v2.ctor)
                                                           {case
                                                            "_Tuple2" :
-                                                             return serialize({_: {}, x: _v0._0, y: _v0._1});}
+                                                             return serialize({_: {}, x: _v2._0, y: _v2._1});}
                                                           _E.Case($moduleName,
-                                                                  "on line 37, column 26 to 53");
+                                                                  "on line 44, column 26 to 53");
                                                         }();
                                                };
+                           var clock = A3(Signal.foldp,
+                                          F2(function (x,y)
+                                             {
+                                               return x + y;
+                                             }),
+                                          0,
+                                          Time.fps(30));
+                           var trigger = Signal.dropRepeats(A2(Signal._op["<~"],
+                                                               F2(function (x,y)
+                                                                  {
+                                                                    return _U.eq(x,y);
+                                                                  })(0),
+                                                               clock));
+                           var firebaseUrl = "https://thsoft.firebaseio-demo.com/thisiselmstamps";
+                           var hack = A2(Signal.sampleOn,
+                                         trigger,
+                                         Signal.constant(firebaseUrl));
+                           var url = Native.Ports.portOut("url",
+                                                          Native.Ports.outgoingSignal(function (v)
+                                                                                      {
+                                                                                        return v;
+                                                                                      }),
+                                                          hack);
                            var firebaseRequest = F2(function (requestType,requestData)
                                                     {
                                                       return A4(Http.request,
                                                                 requestType,
-                                                                "https://thsoft.firebaseio-demo.com/thisiselmstamps.json",
+                                                                _L.append(firebaseUrl,".json"),
                                                                 requestData,
-                                                                _J.toList([]));
+                                                                _L.fromArray([]));
                                                     });
                            var toRequest = function (click)
                                            {
@@ -85,21 +111,21 @@ Elm.StampTogether.make = function (_elm)
                                            };
                            var requests = A2(Util._op["~>"],clicks,toRequest);
                            var sendRequests = Http.send(requests);
-                           var scene = F2(function (_v7,locs)
+                           var scene = F2(function (_v9,locs)
                                           {
                                             return function ()
                                                    {
-                                                     switch (_v7.ctor)
+                                                     switch (_v9.ctor)
                                                      {case
                                                       "_Tuple2" :
                                                         return function ()
                                                                {
-                                                                 var drawPentagon = function (_v11)
+                                                                 var drawPentagon = function (_v13)
                                                                                     {
                                                                                       return function ()
                                                                                              {
-                                                                                               return Graphics.Collage.rotate(_v11.x)(Graphics.Collage.move({ctor: "_Tuple2", _0: _v11.x - Basics.toFloat(_v7._0) / 2, _1: Basics.toFloat(_v7._1) / 2 - _v11.y})(Graphics.Collage.filled(A4(Color.hsva,
-                                                                                                                                                                                                                                                                                            _v11.y,
+                                                                                               return Graphics.Collage.rotate(_v13.x)(Graphics.Collage.move({ctor: "_Tuple2", _0: _v13.x - Basics.toFloat(_v9._0) / 2, _1: Basics.toFloat(_v9._1) / 2 - _v13.y})(Graphics.Collage.filled(A4(Color.hsva,
+                                                                                                                                                                                                                                                                                            _v13.y,
                                                                                                                                                                                                                                                                                             1,
                                                                                                                                                                                                                                                                                             1,
                                                                                                                                                                                                                                                                                             0.7))(A2(Graphics.Collage.ngon,
@@ -108,33 +134,33 @@ Elm.StampTogether.make = function (_elm)
                                                                                              }();
                                                                                     };
                                                                  return A3(Graphics.Collage.collage,
-                                                                           _v7._0,
-                                                                           _v7._1,
+                                                                           _v9._0,
+                                                                           _v9._1,
                                                                            A2(List.map,
                                                                               drawPentagon,
                                                                               locs));
                                                                }();}
-                                                     _E.Case($moduleName,"between lines 23 and 27");
+                                                     _E.Case($moduleName,"between lines 20 and 24");
                                                    }();
                                           });
                            var stamped = Native.Ports.portIn("stamped",
                                                              Native.Ports.incomingSignal(function (v)
                                                                                          {
-                                                                                           return typeof v === "object" && "x" in v && "y" in v ? {_: {}, x: typeof v.x === "number" ? _J.toFloat(v.x) : _E.raise("invalid input, expecting JSNumber but got " + v.x), y: typeof v.y === "number" ? _J.toFloat(v.y) : _E.raise("invalid input, expecting JSNumber but got " + v.y)} : _E.raise("invalid input, expecting JSObject [\"x\",\"y\"] but got " + v);
+                                                                                           return typeof v === "object" && "x" in v && "y" in v ? {_: {}, x: typeof v.x === "number" ? v.x : _E.raise("invalid input, expecting JSNumber but got " + v.x), y: typeof v.y === "number" ? v.y : _E.raise("invalid input, expecting JSNumber but got " + v.y)} : _E.raise("invalid input, expecting JSObject [\"x\",\"y\"] but got " + v);
                                                                                          }));
                            var stamps = A3(Signal.foldp,
                                            F2(function (x,y)
                                               {
                                                 return {ctor: "::", _0: x, _1: y};
                                               }),
-                                           _J.toList([]),
+                                           _L.fromArray([]),
                                            stamped);
                            var main = A3(Signal.lift2,scene,Window.dimensions,stamps);
                            var Stamp = F2(function (a,b)
                                           {
                                             return {_: {}, x: a, y: b};
                                           });
-                           _elm.StampTogether.values = {_op: _op, stamps: stamps, scene: scene, main: main, firebaseRequest: firebaseRequest, serialize: serialize, toRequestData: toRequestData, clicks: clicks, toRequest: toRequest, requests: requests, sendRequests: sendRequests, Stamp: Stamp};
+                           _elm.StampTogether.values = {_op: _op, stamps: stamps, scene: scene, main: main, firebaseUrl: firebaseUrl, clock: clock, trigger: trigger, hack: hack, firebaseRequest: firebaseRequest, serialize: serialize, toRequestData: toRequestData, clicks: clicks, toRequest: toRequest, requests: requests, sendRequests: sendRequests, Stamp: Stamp};
                            return _elm.StampTogether.values;
                          };Elm.Util = Elm.Util || {};
 Elm.Util.make = function (_elm)
@@ -147,7 +173,6 @@ Elm.Util.make = function (_elm)
                       _U = _N.Utils.make(_elm),
                       _L = _N.List.make(_elm),
                       _E = _N.Error.make(_elm),
-                      _J = _N.JavaScript.make(_elm),
                       $moduleName = "Util";
                   var Basics = Elm.Basics.make(_elm);
                   var Color = Elm.Color.make(_elm);
@@ -157,6 +182,8 @@ Elm.Util.make = function (_elm)
                   Graphics.Element = Elm.Graphics.Element.make(_elm);
                   var List = Elm.List.make(_elm);
                   var Maybe = Elm.Maybe.make(_elm);
+                  var Native = Native || {};
+                  Native.Json = Elm.Native.Json.make(_elm);
                   var Native = Native || {};
                   Native.Ports = Elm.Native.Ports.make(_elm);
                   var Signal = Elm.Signal.make(_elm);

@@ -2,8 +2,7 @@ module StampTogether where
 
 import Util (..)
 import Http
-import JavaScript as JS
-import JavaScript.Experimental as JEXP
+import Json
 import Mouse
 import Dict
 import Window
@@ -39,7 +38,8 @@ port url = hack
 
 firebaseRequest requestType requestData = Http.request requestType (firebaseUrl ++ ".json") requestData []
 
-serialize r = r |> JEXP.fromRecord |> Json.fromJSObject |> Json.toJSString " " |> JS.toString
+serialize : Stamp -> String
+serialize { x, y } = Dict.empty |> Dict.insert "x" (Json.Number x) |> Dict.insert "y" (Json.Number y) |> Json.Object |> Json.toString ""
 
 toRequestData (x, y) = { x = x, y = y } |> serialize
 
